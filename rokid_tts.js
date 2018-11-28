@@ -1,5 +1,6 @@
 module.exports = function (RED) {
     var axios = require('axios');
+    var mustache = require("mustache");
 
     function rokidTTSNode(config) {
         RED.nodes.createNode(this, config);
@@ -15,11 +16,29 @@ module.exports = function (RED) {
         }
         let rokid_sn = this.server.sn
         let webhookId = this.server.webhookId
+        
 
         node.on('input', function (msg) {
 
             var payload = {}
-            var text = config.data || msg.data
+            let nodeData = config.data;
+            var isTemplatedData = (nodeData||"").indexOf("{{") != -1;
+
+            var data = nodeData || msg.data;
+            if (msg.data && nodeData && (nodeData !== msg.data)) {  // revert change below when warning is finally removed
+                node.warn(RED._("common.errors.nooverride"));
+            }
+
+            if (isTemplatedData) {
+                data = mustache.render(nodeData,msg);
+            }
+
+            if (!data) {
+                node.error(RED._("没有tts数据"),msg);
+                return;
+            }
+
+            var text = data
             axios({
                 method: 'post',
                 url: `https://homebase.rokid.com/trigger/with/${webhookId}`,
