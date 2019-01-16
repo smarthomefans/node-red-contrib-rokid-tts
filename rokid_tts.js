@@ -22,9 +22,11 @@ module.exports = function (RED) {
 
             var payload = {}
             let nodeData = config.data;
+            let nodeAction = config.action;
             var isTemplatedData = (nodeData||"").indexOf("{{") != -1;
 
             var data = nodeData || msg.data;
+            var action = nodeAction || msg.action;
             if (msg.data && nodeData && (nodeData !== msg.data)) {  // revert change below when warning is finally removed
                 node.warn(RED._("common.errors.nooverride"));
             }
@@ -38,6 +40,12 @@ module.exports = function (RED) {
                 return;
             }
 
+            if (!action) {
+                node.error(RED._("msg.type is undefine"),msg);
+                return;
+            }
+
+
             var text = data
             axios({
                 method: 'post',
@@ -45,7 +53,7 @@ module.exports = function (RED) {
                 headers: {
                     'Content-type': 'application/json; charset=utf-8'
                 },
-                data: { "type": "tts", "devices": { "sn": rokid_sn }, "data": { "text": text } }
+                data: { "type": action, "devices": { "sn": rokid_sn }, "data": { "text": text } }
 
 
             }).then(function (response) {

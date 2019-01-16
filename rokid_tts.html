@@ -5,6 +5,7 @@
         defaults: {
             server: {value:"", type:"rokid-tts-server"},
             data: {value:""}, 
+            action: { value: "tts" }
         },
         inputs:1,
         outputs:1,
@@ -34,6 +35,16 @@
     </div>
 
     <div class="form-row">
+        <label for="node-input-action"><i class="fa fa-code-fork"></i>类型</label>
+        <select id="node-input-action" style="width:70%">
+            <option value="msg" >msg.type</option>
+            <option value="tts" >tts</option>
+            <option value="asr" >asr</option>
+            <option value="audio" >audio</option>
+        </select>
+    </div>
+
+    <div class="form-row">
         <label for="node-input-data"><i class="icon-tag"></i>TTS 文本</label>
         <input type="text" id="node-input-data" maxlength='78' placeholder="(msg.data)">
     </div>
@@ -44,9 +55,11 @@
 <script type="text/x-red" data-help-name="rokid-tts">
     <p>若琪的webhook配置</p>
     <p>可以在前一个节点配置tts文本</p>
-    <p>msg.data = '你好,若琪酱' 直接填写 {{payload}} 会播报上个节点msg.payload 信息</p>
+    <p>msg.data = '你好,若琪酱' 本文框里面直接填写 {{payload}} 会播报上个节点 msg.payload 信息</p>
+    <p>msg.type 为若琪触发类型，是 tts, audio 或 asr 的其中一个<a href="https://developer.rokid.com/docs/rokid-homebase-docs/webhook/">具体文档参考这里</a></p>
+    <p>注意: 如果是音频地址需要以http或https开头, 所有参数不做校验,自己注意</p>
 
-    <p>你有污渍清洗不干净的烦恼吗? 你有时常需要清洗家里的洗衣机吗? 如果你也有和作者一样的烦恼可以关注一下这个产品<a href="#">净态</a>
+    <p>你有污渍清洗不干净的烦恼吗? 你有时常需要清洗家里的洗衣机吗? 如果你也有和作者一样的烦恼可以关注一下这个产品<a href="https://market.m.taobao.com/app/idleFish-F2e/widle-taobao-rax/page-detail?wh_weex=true&wx_navbar_transparent=true&id=585151535724&ut_sk=1.V91Jq7S69tUDACDdk8rLt7je_12431167_1547610510096.Copy.detail.585151535724.925005424&forceFlush=1">净态</a>
     </p>
     <p>作者会用赚来的<b>钱购买设备</b>,写更多的节点, 请我喝一杯咖啡或对产品兴趣可以扫一扫下面二维码</p>
     <img src="https://raw.githubusercontent.com/yaming116/node-red-contrib-rokid-tts/master/images/image.jpg">
