@@ -44,7 +44,10 @@ module.exports = function (RED) {
                 node.error(RED._("msg.type is undefine"),msg);
                 return;
             }
-
+            var type = 'text'
+            if (action == 'audio') {
+                type = 'url'
+            }
 
             var text = data
             axios({
@@ -53,7 +56,7 @@ module.exports = function (RED) {
                 headers: {
                     'Content-type': 'application/json; charset=utf-8'
                 },
-                data: { "type": action, "devices": { "sn": rokid_sn }, "data": { "text": text } }
+                data: { "type": action, "devices": { "sn": rokid_sn }, "data": { type : text } }
 
 
             }).then(function (response) {
@@ -64,7 +67,6 @@ module.exports = function (RED) {
                     throw new Error(JSON.stringify(data))
                 }
                 payload.status = 1
-                payload.data = data
                 msg.payload = payload
                 node.send(msg)
 
@@ -72,7 +74,6 @@ module.exports = function (RED) {
                 payload.status = 0
                 payload.data = error.message
                 msg.payload = payload
-                msg['error'] = error
                 node.send(msg)
             })
         });
