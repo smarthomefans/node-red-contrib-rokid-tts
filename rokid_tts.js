@@ -44,18 +44,20 @@ module.exports = function (RED) {
                 node.error(RED._("msg.type is undefine"),msg);
                 return;
             }
+            var reqData = {}
+            if (action == 'audio') {
+                reqData['url'] = data
+            }else {
+                reqData['text'] = data
+            }
 
-
-            var text = data
             axios({
                 method: 'post',
                 url: `https://homebase.rokid.com/trigger/with/${webhookId}`,
                 headers: {
                     'Content-type': 'application/json; charset=utf-8'
                 },
-                data: { "type": action, "devices": { "sn": rokid_sn }, "data": { "text": text } }
-
-
+                data: { "type": action, "devices": { "sn": rokid_sn }, "data": reqData }
             }).then(function (response) {
                 var data = response.data
                 msg.headers = response.headers
@@ -64,7 +66,6 @@ module.exports = function (RED) {
                     throw new Error(JSON.stringify(data))
                 }
                 payload.status = 1
-                payload.data = data
                 msg.payload = payload
                 node.send(msg)
 
@@ -72,7 +73,6 @@ module.exports = function (RED) {
                 payload.status = 0
                 payload.data = error.message
                 msg.payload = payload
-                msg['error'] = error
                 node.send(msg)
             })
         });
